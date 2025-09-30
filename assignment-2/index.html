@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Store - Data from API</title>
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div id="cart-icon" style="cursor: pointer;">
+            <a href="cart.html" title="View Cart" class="cart-link">
+                🛒
+            </a>
+        </div>
+        <h1>🍳 Recipe Store</h1>
+        
+        <button id="fetchDataBtn" onclick="fetchData()">🍽️ Load Recipe Menu</button>
+        
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Recipe Name</th>
+                    <th>Image</th>
+                    <th>Rating</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; font-style: italic; color: #666;">
+                        Click "Load Recipe Menu" to see our delicious recipes! 🍴
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

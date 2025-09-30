@@ -3,29 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Recipe Data from API</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <script>
-   // const username='k-dubey09';
-    const url="https://api.github.com/users/k-dubey09";
-    const resp=fetch(url);
-    resp.then((res)=>{
-        return res.json();
-    })
-    .then((data)=>{
-        document.getElementById("data").innerHTML=`<img src="${data.avatar_url}" alt="logo">
-        <h2>${data.name}</h2>
-        <p>${data.bio}</p>`;
-    })
-    .catch((err)=>{
-        console.log("Error:",err.message);
-    })
-    .finally(()=>{
-        console.log('Inside Finally block')
-    })
-    </script>
+    <div class="container">
+        <h1>Recipe Data from API</h1>
+        
+        <button id="fetchDataBtn" onclick="fetchData()">Fetch Recipe Data</button>
+        
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th class="ingredients-cell">IMAGE</th>
+                    <th>RATING</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tr>
+                    <td colspan="5">Click "Fetch Recipe Data" to load recipes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

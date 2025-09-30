@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Recipe Store</title>
+    <link href="cart.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Your Cart</h1>
+            <a href="index.html" class="back-link">← Back to Menu</a>
+        </div>
+        
+        <table id="cart-table">
+            <thead>
+                <tr>
+                    <th>Recipe</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="cart-body">
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px; font-style: italic; color: #666;">
+                        Your cart is empty! Start adding some delicious recipes. 🍽️
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="total-section">
+            <h2 id="total-amount">Total Amount: ₹0.00</h2>
+            <div class="cart-actions">
+                <button onclick="clearCart()" class="btn btn-danger">Clear Cart</button>
+                <button onclick="checkout()" class="btn btn-success">Checkout 🛍️</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="cart.js"></script>
+</body>
+</html>
