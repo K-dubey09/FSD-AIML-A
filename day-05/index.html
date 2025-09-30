@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub User Info</title>
+</head>
+<body>
+    <h1>Fetching data from GitHub API</h1>
+    <!-- The JavaScript will now populate this element -->
+    <p id="data">Loading...</p>
+
+       
+<script>
+    const username='k-dubey09';
+    const url="https://api.github.com/users/k-dubey09";
+    const resp=fetch(url);
+    resp.then((res)=>{
+        return res.json();
+    })
+    .then((data)=>{
+        document.getElementById("data").innerHTML=`<img src="${data.avatar_url}" alt="logo">
+        <h2>${data.name}</h2>
+        <p>${data.bio}</p>`;
+    })
+    .catch((err)=>{
+        console.log("Error:",err.message);
+    })
+    .finally(()=>{
+        console.log('Inside Finally block')
+    })
+</script> 
+
+</body>
+</html>

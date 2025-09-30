@@ -1,0 +1,55 @@
+.container{
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: row;
+}
+
+.header{
+    display: flex;
+    top:0px;
+    left:0px;
+    height:10%;
+    width: 100%;
+    position: absolute;
+    background-color: lightcoral;
+    flex-direction: column;
+    text-align : center; 
+}
+
+iframe{
+    height: 85%;
+    width: 85%;
+}
+
+.left{
+    display: flex;
+    height: 85%;
+    width: 15%;
+    position: absolute;
+    background-color: lightblue;
+    left:0px;
+    top:10%;
+    flex-direction: column;
+}
+
+.right{
+    display: flex;
+    height: 85%;
+    width: 85%;
+    position: absolute;
+    background-color: lightgreen;
+    right:0px;
+    top:10%;
+    flex-direction: column;
+}
+.footer{
+    display: flex;
+    height: 5%;
+    width: 100%;
+    position: absolute;
+    background-color: lightgrey;
+    bottom:0px;
+    left:0px;
+    flex-direction: column;
+}
