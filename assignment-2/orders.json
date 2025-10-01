@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1759304827316,
+    "createdAt": "2025-10-01T07:47:07.316Z",
+    "items": [
+      {
+        "id": "1",
+        "name": "Classic Margherita Pizza",
+        "price": 496.74,
+        "image": "https://cdn.dummyjson.com/recipe-images/1.webp",
+        "quantity": 1
+      }
+    ],
+    "total": 496.74
+  }
+]

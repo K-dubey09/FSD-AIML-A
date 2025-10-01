@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Store - Enhanced Edition</title>
+    <link href="styles-enhanced.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>🍳 Recipe Store</h1>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-left">
+                    <a href="#" id="homeLink" class="nav-link active">Home</a>
+                    <a href="#" id="ordersLink" class="nav-link" style="display:none">My Orders</a>
+                    <a href="admin.html" id="adminLink" class="nav-link" style="display:none">Admin</a>
+                </div>
+                <div class="nav-right">
+                    <div id="cartIcon" class="cart-icon">
+                        🛒 <span id="cartCount">0</span>
+                    </div>
+                    <div id="userMenu" class="user-menu">
+                        <button id="loginBtn" class="btn btn-primary">Login</button>
+                        <button id="registerBtn" class="btn btn-secondary">Register</button>
+                        <div id="userInfo" style="display:none">
+                            <span id="username"></span>
+                            <button id="logoutBtn" class="btn btn-outline">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Home Section -->
+            <section id="homeSection" class="section active">
+                <div class="controls-bar">
+                    <button type="button" id="refreshBtn" class="btn btn-primary">🔄 Refresh Products</button>
+                    <div class="search-sort">
+                        <input id="searchBox" placeholder="Search recipes..." class="search-input" />
+                        <select id="sortSelect" class="sort-select">
+                            <option value="default">Sort by</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="rating-desc">Rating: High to Low</option>
+                            <option value="name-asc">Name: A to Z</option>
+                        </select>
+                        <select id="filterCuisine" class="filter-select">
+                            <option value="">All Cuisines</option>
+                        </select>
+                        <select id="filterDifficulty" class="filter-select">
+                            <option value="">All Difficulties</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="status" class="status-message"></div>
+                <div id="loadingSpinner" class="loading-spinner" style="display:none">Loading...</div>
+
+                <div id="productsGrid" class="products-grid">
+                    <div class="empty-state">
+                        <h3>Welcome to Recipe Store!</h3>
+                        <p>Click "Refresh Products" to load our delicious recipes.</p>
+                    </div>
+                </div>
+
+                <div id="pagination" class="pagination" style="display:none"></div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="ordersSection" class="section">
+                <h2>My Orders</h2>
+                <div id="ordersList" class="orders-list">
+                    <div class="empty-state">
+                        <h3>No orders yet</h3>
+                        <p>Start shopping to see your orders here!</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Shopping Cart</h3>
+            <button id="closeCart" class="close-btn">×</button>
+        </div>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <strong>Total: ₹<span id="cartTotal">0.00</span></strong>
+            </div>
+            <div class="cart-actions">
+                <button id="clearCartBtn" class="btn btn-outline">Clear Cart</button>
+                <button id="checkoutBtn" class="btn btn-primary">Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Details Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button id="closeModal" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="product-details">
+                    <img id="modalImage" src="" alt="" class="product-image">
+                    <div class="product-info">
+                        <div class="rating">
+                            <span id="modalRating"></span>
+                        </div>
+                        <div class="price">
+                            <span id="modalPrice"></span>
+                        </div>
+                        <div class="meta-info">
+                            <span id="modalCuisine"></span> • 
+                            <span id="modalDifficulty"></span> • 
+                            <span id="modalTime"></span>
+                        </div>
+                        <p id="modalDescription"></p>
+                        
+                        <div class="ingredients">
+                            <h4>Ingredients:</h4>
+                            <ul id="modalIngredients"></ul>
+                        </div>
+                        
+                        <div class="instructions">
+                            <h4>Instructions:</h4>
+                            <ol id="modalInstructions"></ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="quantity-selector">
+                    <label>Quantity:</label>
+                    <input id="modalQuantity" type="number" value="1" min="1" max="10">
+                </div>
+                <button id="addToCartModal" class="btn btn-primary">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login</h2>
+                <button class="close-btn" onclick="closeModal('loginModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Username or Email:</label>
+                        <input type="text" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Login</button>
+                </form>
+                <p class="text-center">
+                    Don't have an account? <a href="#" onclick="switchToRegister()">Register here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Register</h2>
+                <button class="close-btn" onclick="closeModal('registerModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label>Username:</label>
+                        <input type="text" id="registerUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" id="registerPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Register</button>
+                </form>
+                <p class="text-center">
+                    Already have an account? <a href="#" onclick="switchToLogin()">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="enhanced-app.js"></script>
+</body>
+</html>

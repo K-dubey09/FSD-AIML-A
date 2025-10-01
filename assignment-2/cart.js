@@ -62,7 +62,7 @@ function renderCart(cart) {
         btnMinus.textContent = '-';
         btnMinus.addEventListener('click', function (e) {
             e.preventDefault();
-            changeQuantity(item.name, -1);
+            changeQuantity(item.id, -1);
             return false;
         });
 
@@ -76,7 +76,7 @@ function renderCart(cart) {
         btnPlus.textContent = '+';
         btnPlus.addEventListener('click', function (e) {
             e.preventDefault();
-            changeQuantity(item.name, 1);
+            changeQuantity(item.id, 1);
             return false;
         });
 
@@ -93,7 +93,7 @@ function renderCart(cart) {
         btnRemove.style.marginLeft = '10px';
         btnRemove.addEventListener('click', function (e) {
             e.preventDefault();
-            removeItem(item.name);
+            removeItem(item.id);
             return false;
         });
         tdTotal.appendChild(btnRemove);
@@ -110,11 +110,11 @@ function renderCart(cart) {
 }
 
 // Change quantity of item
-function changeQuantity(name, change) {
+function changeQuantity(id, change) {
     fetch('http://localhost:3000/cart/change', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, change })
+        body: JSON.stringify({ id, change })
     })
     .then(r => r.json())
     .then(() => loadCart())
@@ -122,11 +122,11 @@ function changeQuantity(name, change) {
 }
 
 // Remove item from cart
-function removeItem(name) {
+function removeItem(id) {
     fetch('http://localhost:3000/cart/remove', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ id })
     })
     .then(r => r.json())
     .then(() => loadCart())
@@ -157,10 +157,10 @@ function checkout() {
                 fetch('http://localhost:3000/cart/checkout', { method: 'POST' })
                     .then(r => r.json())
                     .then(res => {
-                        alert(`Order placed successfully! Total paid: ₹${res.total.toFixed(2)}`);
+                        if (window.notify) notify(`Order placed successfully! Total paid: ₹${res.total.toFixed(2)}`, 'success');
                         loadCart();
                     })
-                    .catch(err => console.error('Checkout failed', err));
+                    .catch(err => { console.error('Checkout failed', err); if (window.notify) notify('Checkout failed', 'error'); });
             }
         })
         .catch(err => console.error('Failed to fetch cart for checkout', err));

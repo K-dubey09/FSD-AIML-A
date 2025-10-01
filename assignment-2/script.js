@@ -4,152 +4,79 @@ function generateRandomPrice(min = 149, max = 499) {
 }
 
 function fetchData() {
-    const url = "https://dummyjson.com/recipes";
-    
-    // Show loading message
-    const tableBody = document.getElementById("table-body");
-    tableBody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
-    
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log(data);
-            // Request persistent prices for these recipe ids from the server
-            const ids = data.recipes.map(r => r.id);
-            fetch('http://localhost:3000/prices/batch', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids })
-            })
+        const tableBody = document.getElementById('table-body');
+        tableBody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
+
+        // Try to load stored products first
+        fetch('/products')
             .then(r => r.json())
-            .then(pricesMap => {
-                // Build rows using DOM methods (prices come from server)
-                tableBody.innerHTML = '';
-                data.recipes.forEach(recipe => {
-                    const randomPrice = pricesMap[String(recipe.id)] || generateRandomPrice(149, 499);
-
-                const tr = document.createElement('tr');
-
-                const tdId = document.createElement('td');
-                tdId.textContent = recipe.id;
-
-                const tdName = document.createElement('td');
-                tdName.textContent = recipe.name;
-
-                const tdImg = document.createElement('td');
-                const img = document.createElement('img');
-                img.src = recipe.image;
-                img.alt = recipe.name;
-                img.style.maxWidth = '100px';
-                img.style.height = '80px';
-                img.style.objectFit = 'cover';
-                img.style.borderRadius = '5px';
-                tdImg.appendChild(img);
-
-                const tdRating = document.createElement('td');
-                tdRating.textContent = `⭐ ${recipe.rating}`;
-
-                const tdPrice = document.createElement('td');
-                tdPrice.textContent = `₹${randomPrice}`;
-
-                const tdAction = document.createElement('td');
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'add-to-cart';
-                btn.dataset.name = encodeURIComponent(recipe.name);
-                btn.dataset.price = randomPrice;
-                btn.dataset.image = encodeURIComponent(recipe.image || '');
-                btn.textContent = 'Add to Cart';
-                btn.addEventListener('click', function (e) {
-                    const name = decodeURIComponent(this.dataset.name);
-                    const price = parseFloat(this.dataset.price);
-                    const image = decodeURIComponent(this.dataset.image);
-                    addToCart(name, price, image);
-                    e.preventDefault();
-                    return false;
-                });
-                tdAction.appendChild(btn);
-
-                tr.appendChild(tdId);
-                tr.appendChild(tdName);
-                tr.appendChild(tdImg);
-                tr.appendChild(tdRating);
-                tr.appendChild(tdPrice);
-                tr.appendChild(tdAction);
-
-                    tableBody.appendChild(tr);
-                });
+            .then(products => {
+                if (!products || products.length === 0) {
+                    // refresh from external API
+                    return fetch('/products/refresh', { method: 'POST' })
+                        .then(r => r.json())
+                        .then(() => fetch('/products').then(r => r.json()));
+                }
+                return products;
+            })
+            .then(products => {
+                window._products = products || [];
+                renderProducts(window._products);
             })
             .catch(err => {
-                console.error('Failed to fetch prices, falling back to local generation', err);
-                // Fallback: render with local generated prices
-                tableBody.innerHTML = '';
-                data.recipes.forEach(recipe => {
-                    const randomPrice = generateRandomPrice(149, 499);
-
-                    const tr = document.createElement('tr');
-
-                    const tdId = document.createElement('td');
-                    tdId.textContent = recipe.id;
-
-                    const tdName = document.createElement('td');
-                    tdName.textContent = recipe.name;
-
-                    const tdImg = document.createElement('td');
-                    const img = document.createElement('img');
-                    img.src = recipe.image;
-                    img.alt = recipe.name;
-                    img.style.maxWidth = '100px';
-                    img.style.height = '80px';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '5px';
-                    tdImg.appendChild(img);
-
-                    const tdRating = document.createElement('td');
-                    tdRating.textContent = `⭐ ${recipe.rating}`;
-
-                    const tdPrice = document.createElement('td');
-                    tdPrice.textContent = `₹${randomPrice}`;
-
-                    const tdAction = document.createElement('td');
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'add-to-cart';
-                    btn.dataset.name = encodeURIComponent(recipe.name);
-                    btn.dataset.price = randomPrice;
-                    btn.dataset.image = encodeURIComponent(recipe.image || '');
-                    btn.textContent = 'Add to Cart';
-                    btn.addEventListener('click', function (e) {
-                        const name = decodeURIComponent(this.dataset.name);
-                        const price = parseFloat(this.dataset.price);
-                        const image = decodeURIComponent(this.dataset.image);
-                        addToCart(name, price, image);
-                        e.preventDefault();
-                        return false;
-                    });
-                    tdAction.appendChild(btn);
-
-                    tr.appendChild(tdId);
-                    tr.appendChild(tdName);
-                    tr.appendChild(tdImg);
-                    tr.appendChild(tdRating);
-                    tr.appendChild(tdPrice);
-                    tr.appendChild(tdAction);
-
-                    tableBody.appendChild(tr);
-                });
+                console.error('Failed to load products', err);
+                tableBody.innerHTML = '<tr><td colspan="6">Error loading data. Please try again.</td></tr>';
             });
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-            tableBody.innerHTML = '<tr><td colspan="6">Error loading data. Please try again.</td></tr>';
-        });
+
 }
+
+
+function renderProducts(products) {
+    const tableBody = document.getElementById('table-body');
+    const statusEl = document.getElementById('status');
+    tableBody.innerHTML = '';
+
+    const search = (document.getElementById('searchBox') || {}).value || '';
+    const sort = (document.getElementById('sortSelect') || {}).value || 'default';
+
+    let list = products.slice();
+    if (search) {
+        const q = search.toLowerCase();
+        list = list.filter(p => (p.name||'').toLowerCase().includes(q));
+    }
+    if (sort === 'price-asc') list.sort((a,b)=>a.price-b.price);
+    if (sort === 'price-desc') list.sort((a,b)=>b.price-a.price);
+    if (sort === 'rating-desc') list.sort((a,b)=> (b.rating||0)-(a.rating||0));
+
+    if (!list || list.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px">No recipes found</td></tr>';
+        if (statusEl) statusEl.textContent = '';
+        return;
+    }
+
+    list.forEach(recipe => {
+        const tr = document.createElement('tr');
+        const tdId = document.createElement('td'); tdId.textContent = recipe.id;
+        const tdName = document.createElement('td'); tdName.textContent = recipe.name;
+        const tdImg = document.createElement('td');
+        const img = document.createElement('img'); img.src = recipe.image || ''; img.alt = recipe.name || '';
+        img.style.maxWidth='100px'; img.style.height='80px'; img.style.objectFit='cover'; img.style.borderRadius='5px'; tdImg.appendChild(img);
+        const tdRating = document.createElement('td'); tdRating.textContent = `⭐ ${recipe.rating||0}`;
+        const tdPrice = document.createElement('td'); tdPrice.textContent = `₹${(recipe.price||0).toFixed(2)}`;
+        const tdAction = document.createElement('td');
+
+        const btn = document.createElement('button'); btn.type='button'; btn.className='add-to-cart'; btn.textContent='Add to Cart';
+        btn.addEventListener('click', ()=> addToCart(recipe.id, recipe.name, recipe.price, recipe.image, 1));
+        tdAction.appendChild(btn);
+
+        const detailsBtn = document.createElement('button'); detailsBtn.type='button'; detailsBtn.textContent='Details'; detailsBtn.style.marginLeft='8px';
+        detailsBtn.addEventListener('click', ()=> window.openProductDetails && window.openProductDetails({...recipe, quantity:1}));
+        tdAction.appendChild(detailsBtn);
+
+        tr.appendChild(tdId); tr.appendChild(tdName); tr.appendChild(tdImg); tr.appendChild(tdRating); tr.appendChild(tdPrice); tr.appendChild(tdAction);
+        tableBody.appendChild(tr);
+      });
+    }
 
 // Load cart count on page load
 function updateCartCount() {
@@ -168,20 +95,20 @@ function updateCartCount() {
 }
 
 // Function to handle add to cart functionality
-function addToCart(recipeName, price, image) {
+function addToCart(id, recipeName, price, image, quantity = 1) {
     fetch('http://localhost:3000/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: recipeName, price: parseFloat(price), image, quantity: 1 })
+        body: JSON.stringify({ id, name: recipeName, price: parseFloat(price), image, quantity })
     })
     .then(r => r.json())
     .then(() => {
-        alert(`Added "${recipeName}" to cart for ₹${price}`);
+        if (window.notify) notify(`Added "${recipeName}" x${quantity} to cart for ₹${(price * quantity).toFixed(2)}`, 'success');
         updateCartCount();
     })
     .catch(err => {
         console.error('Error adding to cart', err);
-        alert('Failed to add to cart. Is the cart server running?');
+        if (window.notify) notify('Failed to add to cart. Is the cart server running?', 'error');
     });
 }
 
@@ -190,3 +117,8 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
 });
 document.getElementById("fetchDataBtn").addEventListener("click", fetchData);
+// wire search/sort controls
+const sb = document.getElementById('searchBox');
+if (sb) sb.addEventListener('input', () => renderProducts(window._products || []));
+const ss = document.getElementById('sortSelect');
+if (ss) ss.addEventListener('change', () => renderProducts(window._products || []));
