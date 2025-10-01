@@ -12,53 +12,105 @@ function loadCart() {
 }
 
 function renderCart(cart) {
-    const cartBody = document.getElementById("cart-body");
-    const totalElement = document.getElementById("total-amount");
+    const cartBody = document.getElementById('cart-body');
+    const totalElement = document.getElementById('total-amount');
+
+    cartBody.innerHTML = '';
 
     if (!cart || cart.length === 0) {
-        cartBody.innerHTML = `
-            <tr>
-                <td colspan="4" style="text-align: center; padding: 40px; font-style: italic; color: #666;">
-                    Your cart is empty! Start adding some delicious recipes. 🍽️
-                </td>
-            </tr>`;
-        totalElement.innerHTML = "Total Amount: ₹0.00";
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 4;
+        td.style.textAlign = 'center';
+        td.style.padding = '40px';
+        td.style.fontStyle = 'italic';
+        td.style.color = '#666';
+        td.textContent = 'Your cart is empty! Start adding some delicious recipes. 🍽️';
+        tr.appendChild(td);
+        cartBody.appendChild(tr);
+        totalElement.innerHTML = 'Total Amount: ₹0.00';
         return;
     }
 
-    let cartHTML = "";
     let total = 0;
 
-    cart.forEach((item, index) => {
+    cart.forEach(item => {
         const itemTotal = item.price * item.quantity;
         total += itemTotal;
 
-        cartHTML += `
-            <tr>
-                <td>
-                    <img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
-                    ${item.name}
-                </td>
-                <td>₹${item.price.toFixed(2)}</td>
-                <td>
-                    <button onclick="changeQuantity('${encodeURIComponent(item.name)}', -1)" class="qty-btn">-</button>
-                    <span class="quantity">${item.quantity}</span>
-                    <button onclick="changeQuantity('${encodeURIComponent(item.name)}', 1)" class="qty-btn">+</button>
-                </td>
-                <td>
-                    ₹${itemTotal.toFixed(2)}
-                    <button onclick="removeItem('${encodeURIComponent(item.name)}')" class="remove-btn">🗑️</button>
-                </td>
-            </tr>`;
+        const tr = document.createElement('tr');
+
+        const tdInfo = document.createElement('td');
+        const img = document.createElement('img');
+        img.src = item.image || '';
+        img.alt = item.name;
+        img.style.width = '50px';
+        img.style.height = '50px';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '5px';
+        img.style.marginRight = '10px';
+        tdInfo.appendChild(img);
+        tdInfo.appendChild(document.createTextNode(item.name));
+
+        const tdPrice = document.createElement('td');
+        tdPrice.textContent = `₹${item.price.toFixed(2)}`;
+
+        const tdQty = document.createElement('td');
+        const btnMinus = document.createElement('button');
+        btnMinus.type = 'button';
+        btnMinus.className = 'qty-btn';
+        btnMinus.textContent = '-';
+        btnMinus.addEventListener('click', function (e) {
+            e.preventDefault();
+            changeQuantity(item.name, -1);
+            return false;
+        });
+
+        const spanQty = document.createElement('span');
+        spanQty.className = 'quantity';
+        spanQty.textContent = item.quantity;
+
+        const btnPlus = document.createElement('button');
+        btnPlus.type = 'button';
+        btnPlus.className = 'qty-btn';
+        btnPlus.textContent = '+';
+        btnPlus.addEventListener('click', function (e) {
+            e.preventDefault();
+            changeQuantity(item.name, 1);
+            return false;
+        });
+
+        tdQty.appendChild(btnMinus);
+        tdQty.appendChild(spanQty);
+        tdQty.appendChild(btnPlus);
+
+        const tdTotal = document.createElement('td');
+        tdTotal.textContent = `₹${itemTotal.toFixed(2)}`;
+        const btnRemove = document.createElement('button');
+        btnRemove.type = 'button';
+        btnRemove.className = 'remove-btn';
+        btnRemove.textContent = '🗑️';
+        btnRemove.style.marginLeft = '10px';
+        btnRemove.addEventListener('click', function (e) {
+            e.preventDefault();
+            removeItem(item.name);
+            return false;
+        });
+        tdTotal.appendChild(btnRemove);
+
+        tr.appendChild(tdInfo);
+        tr.appendChild(tdPrice);
+        tr.appendChild(tdQty);
+        tr.appendChild(tdTotal);
+
+        cartBody.appendChild(tr);
     });
 
-    cartBody.innerHTML = cartHTML;
     totalElement.innerHTML = `Total Amount: ₹${total.toFixed(2)}`;
 }
 
 // Change quantity of item
-function changeQuantity(index, change) {
-    const name = decodeURIComponent(index);
+function changeQuantity(name, change) {
     fetch('http://localhost:3000/cart/change', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -70,8 +122,7 @@ function changeQuantity(index, change) {
 }
 
 // Remove item from cart
-function removeItem(index) {
-    const name = decodeURIComponent(index);
+function removeItem(name) {
     fetch('http://localhost:3000/cart/remove', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

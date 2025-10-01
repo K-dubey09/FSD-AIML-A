@@ -8,6 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 const CART_FILE = path.join(__dirname, 'cart.json');
+const PRICES_FILE = path.join(__dirname, 'prices.json');
 
 function readCart() {
   try {
@@ -22,8 +23,55 @@ function writeCart(cart) {
   fs.writeFileSync(CART_FILE, JSON.stringify(cart, null, 2));
 }
 
+function readPrices() {
+  try {
+    const data = fs.readFileSync(PRICES_FILE, 'utf8');
+    return JSON.parse(data || '{}');
+  } catch (e) {
+    return {};
+  }
+}
+
+function writePrices(prices) {
+  fs.writeFileSync(PRICES_FILE, JSON.stringify(prices, null, 2));
+}
+
+function generateRandomPrice(min = 149, max = 499) {
+  const p = Math.random() * (max - min) + min;
+  return Number(p.toFixed(2));
+}
+
 app.get('/cart', (req, res) => {
   res.json(readCart());
+});
+
+// Return all saved prices
+app.get('/prices', (req, res) => {
+  res.json(readPrices());
+});
+
+// Batch endpoint: accepts { ids: [1,2,3] } and returns { "1": 199.00, ... }
+app.post('/prices/batch', (req, res) => {
+  const ids = req.body && req.body.ids;
+  if (!Array.isArray(ids)) return res.status(400).json({ error: 'ids array required' });
+
+  const prices = readPrices();
+  let changed = false;
+
+  ids.forEach(id => {
+    const key = String(id);
+    if (prices[key] == null) {
+      prices[key] = generateRandomPrice();
+      changed = true;
+    }
+  });
+
+  if (changed) writePrices(prices);
+
+  // return only requested ids mapping
+  const out = {};
+  ids.forEach(id => { out[String(id)] = prices[String(id)]; });
+  res.json(out);
 });
 
 app.post('/cart/add', (req, res) => {

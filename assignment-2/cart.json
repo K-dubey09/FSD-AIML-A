@@ -1,14 +1,1 @@
-[
-  {
-    "name": "Classic Margherita Pizza",
-    "price": 171.66,
-    "image": "https://cdn.dummyjson.com/recipe-images/1.webp",
-    "quantity": 1
-  },
-  {
-    "name": "Vegetarian Stir-Fry",
-    "price": 243.21,
-    "image": "https://cdn.dummyjson.com/recipe-images/2.webp",
-    "quantity": 1
-  }
-]
+[]
