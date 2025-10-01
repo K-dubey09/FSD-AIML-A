@@ -45,35 +45,36 @@ function fetchData() {
 
 // Load cart count on page load
 function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const cartIcon = document.querySelector('.cart-link');
-    if (cartIcon) {
-        cartIcon.innerHTML = `🛒 (${cart.length})`;
-    }
+    fetch('http://localhost:3000/cart')
+        .then(r => r.json())
+        .then(cart => {
+            const cartIcon = document.querySelector('.cart-link');
+            if (cartIcon) {
+                cartIcon.innerHTML = `🛒 (${cart.length})`;
+            }
+        })
+        .catch(() => {
+            const cartIcon = document.querySelector('.cart-link');
+            if (cartIcon) cartIcon.innerHTML = `🛒 (0)`;
+        });
 }
 
 // Function to handle add to cart functionality
 function addToCart(recipeName, price, image) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    
-    // Check if item already exists in cart
-    const existingItem = cart.find(item => item.name === recipeName);
-    
-    if (existingItem) {
-        existingItem.quantity += 1;
-        alert(`Increased quantity of "${recipeName}" in cart!`);
-    } else {
-        cart.push({
-            name: recipeName,
-            price: parseFloat(price),
-            image: image,
-            quantity: 1
-        });
+    fetch('http://localhost:3000/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: recipeName, price: parseFloat(price), image, quantity: 1 })
+    })
+    .then(r => r.json())
+    .then(() => {
         alert(`Added "${recipeName}" to cart for ₹${price}`);
-    }
-    
-    localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartCount();
+        updateCartCount();
+    })
+    .catch(err => {
+        console.error('Error adding to cart', err);
+        alert('Failed to add to cart. Is the cart server running?');
+    });
 }
 
 // Initialize cart count on page load

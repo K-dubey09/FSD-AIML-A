@@ -1,10 +1,21 @@
 // Load and display cart items
 function loadCart() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    fetch('http://localhost:3000/cart')
+        .then(r => r.json())
+        .then(cart => {
+            renderCart(cart);
+        })
+        .catch(err => {
+            console.error('Failed to load cart', err);
+            renderCart([]);
+        });
+}
+
+function renderCart(cart) {
     const cartBody = document.getElementById("cart-body");
     const totalElement = document.getElementById("total-amount");
-    
-    if (cart.length === 0) {
+
+    if (!cart || cart.length === 0) {
         cartBody.innerHTML = `
             <tr>
                 <td colspan="4" style="text-align: center; padding: 40px; font-style: italic; color: #666;">
@@ -14,14 +25,14 @@ function loadCart() {
         totalElement.innerHTML = "Total Amount: ₹0.00";
         return;
     }
-    
+
     let cartHTML = "";
     let total = 0;
-    
+
     cart.forEach((item, index) => {
         const itemTotal = item.price * item.quantity;
         total += itemTotal;
-        
+
         cartHTML += `
             <tr>
                 <td>
@@ -30,69 +41,78 @@ function loadCart() {
                 </td>
                 <td>₹${item.price.toFixed(2)}</td>
                 <td>
-                    <button onclick="changeQuantity(${index}, -1)" class="qty-btn">-</button>
+                    <button onclick="changeQuantity('${encodeURIComponent(item.name)}', -1)" class="qty-btn">-</button>
                     <span class="quantity">${item.quantity}</span>
-                    <button onclick="changeQuantity(${index}, 1)" class="qty-btn">+</button>
+                    <button onclick="changeQuantity('${encodeURIComponent(item.name)}', 1)" class="qty-btn">+</button>
                 </td>
                 <td>
                     ₹${itemTotal.toFixed(2)}
-                    <button onclick="removeItem(${index})" class="remove-btn">🗑️</button>
+                    <button onclick="removeItem('${encodeURIComponent(item.name)}')" class="remove-btn">🗑️</button>
                 </td>
             </tr>`;
     });
-    
+
     cartBody.innerHTML = cartHTML;
     totalElement.innerHTML = `Total Amount: ₹${total.toFixed(2)}`;
 }
 
 // Change quantity of item
 function changeQuantity(index, change) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    
-    if (cart[index]) {
-        cart[index].quantity += change;
-        
-        if (cart[index].quantity <= 0) {
-            cart.splice(index, 1);
-        }
-        
-        localStorage.setItem("cart", JSON.stringify(cart));
-        loadCart();
-    }
+    const name = decodeURIComponent(index);
+    fetch('http://localhost:3000/cart/change', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, change })
+    })
+    .then(r => r.json())
+    .then(() => loadCart())
+    .catch(err => console.error('Failed to change quantity', err));
 }
 
 // Remove item from cart
 function removeItem(index) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.splice(index, 1);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    loadCart();
+    const name = decodeURIComponent(index);
+    fetch('http://localhost:3000/cart/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+    })
+    .then(r => r.json())
+    .then(() => loadCart())
+    .catch(err => console.error('Failed to remove item', err));
 }
 
 // Clear entire cart
 function clearCart() {
     if (confirm("Are you sure you want to clear your cart?")) {
-        localStorage.removeItem("cart");
-        loadCart();
+        fetch('http://localhost:3000/cart/clear', { method: 'POST' })
+            .then(r => r.json())
+            .then(() => loadCart())
+            .catch(err => console.error('Failed to clear cart', err));
     }
 }
 
 // Checkout function
 function checkout() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    
-    if (cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
-    }
-    
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    
-    if (confirm(`Proceed to checkout? Total: ₹${total.toFixed(2)}`)) {
-        alert("Order placed successfully! 🎉");
-        localStorage.removeItem("cart");
-        loadCart();
-    }
+    fetch('http://localhost:3000/cart')
+        .then(r => r.json())
+        .then(cart => {
+            if (!cart || cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            if (confirm(`Proceed to checkout? Total: ₹${total.toFixed(2)}`)) {
+                fetch('http://localhost:3000/cart/checkout', { method: 'POST' })
+                    .then(r => r.json())
+                    .then(res => {
+                        alert(`Order placed successfully! Total paid: ₹${res.total.toFixed(2)}`);
+                        loadCart();
+                    })
+                    .catch(err => console.error('Checkout failed', err));
+            }
+        })
+        .catch(err => console.error('Failed to fetch cart for checkout', err));
 }
 
 // Load cart when page loads
