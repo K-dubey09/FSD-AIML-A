@@ -5,6 +5,16 @@
     "email": "admin@recipestore.com",
     "password": "$2a$10$.JRsaX/zsf034.Wy2o4h4.CBg5IwF.pTh/dpmT9pytUj72HEUZizi",
     "role": "admin",
-    "createdAt": "2025-10-01T09:24:29.000Z"
+    "createdAt": "2025-10-01T09:24:29.000Z",
+    "lastLogin": "2025-10-03T06:11:42.398Z"
+  },
+  {
+    "id": "1759314116833p6wj3tkh8",
+    "username": "user",
+    "email": "user@normal.com",
+    "password": "$2a$10$RorxdkOR9UJY/y9mh1fKyeOBP5PYT6j/f891uuDvg0QB3mmttxp2S",
+    "role": "user",
+    "createdAt": "2025-10-01T10:21:56.833Z",
+    "lastLogin": "2025-10-01T15:54:31.444Z"
   }
 ]

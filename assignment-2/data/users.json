@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@recipestore.com",
+    "password": "$2a$10$gWaCv6z0uvvinq6PDmmw/uePezWEqzpxA/CvTCMPSs23rrMMFRd96",
+    "role": "admin",
+    "createdAt": "2025-10-03T05:32:36.622Z",
+    "lastLogin": "2025-10-03T05:59:00.631Z"
+  },
+  {
+    "id": 2,
+    "username": "user",
+    "email": "user@example.com",
+    "password": "$2a$10$uCWX5rIjqTfzaj3qyJRh6.pUM090mtVg6YoZ../P0qKrYpLQd357C",
+    "role": "user",
+    "createdAt": "2025-10-03T05:32:36.700Z",
+    "lastLogin": "2025-10-03T05:35:32.163Z"
+  }
+]

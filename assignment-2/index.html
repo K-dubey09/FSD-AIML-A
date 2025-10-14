@@ -3,68 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Store - Data from API</title>
-    <link href="styles.css" rel="stylesheet">
+    <title>Recipe Store - RBAC Enhanced</title>
+    <link rel="stylesheet" href="styles-rbac.css">
 </head>
 <body>
-    <div class="container">
-        <div id="cart-icon" style="cursor: pointer;">
-            <a href="cart.html" title="View Cart" class="cart-link">
-                🛒
-            </a>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">🍳 Recipe Store</a>
+                
+                <div class="nav-links">
+                    <a href="#" id="homeLink" class="nav-link active">🏠 Home</a>
+                    <a href="#" id="ordersLink" class="nav-link" style="display: none;">📋 My Orders</a>
+                    <a href="admin.html" id="adminLink" class="nav-link" style="display: none;">⚙️ Admin Panel</a>
+                </div>
+                
+                <div class="user-actions">
+                    <div class="cart-icon" id="cartIcon">
+                        🛒
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                    
+                    <button id="loginBtn" class="btn btn-outline btn-small">Login</button>
+                    <button id="registerBtn" class="btn btn-primary btn-small">Register</button>
+                    
+                    <div id="userInfo" class="user-info" style="display: none;">
+                        <span id="username"></span>
+                        <button id="logoutBtn" class="btn btn-danger btn-small">Logout</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <h1>🍳 Recipe Store</h1>
-        
-    <div style="margin-bottom:8px; display:flex; gap:8px; align-items:center;">
-        <button type="button" id="fetchDataBtn" onclick="fetchData()">🍽️ Refresh Menu</button>
-        <input id="searchBox" placeholder="Search recipes..." style="flex:1; padding:6px" />
-        <select id="sortSelect">
-            <option value="default">Sort</option>
-            <option value="price-asc">Price ↑</option>
-            <option value="price-desc">Price ↓</option>
-            <option value="rating-desc">Rating ↓</option>
-        </select>
-    </div>
+    </header>
 
-    <div id="status" style="margin:8px 0; color:#333; font-style: italic;"></div>
+    <div class="container">
+        <!-- Home Section -->
+        <div id="homeSection" class="section active">
+            <!-- Search and Filters -->
+            <div class="controls">
+                <div class="search-section">
+                    <input type="text" id="searchBox" class="search-box" placeholder="Search recipes...">
+                    <button id="refreshBtn" class="btn btn-primary">🔄 Refresh Data</button>
+                </div>
+                
+                <div class="filters-section">
+                    <div class="filter-group">
+                        <label for="sortSelect">Sort By</label>
+                        <select id="sortSelect" class="filter-select">
+                            <option value="">Default</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="rating-desc">Rating: High to Low</option>
+                            <option value="name-asc">Name: A to Z</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="filterCuisine">Cuisine</label>
+                        <select id="filterCuisine" class="filter-select">
+                            <option value="">All Cuisines</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="filterDifficulty">Difficulty</label>
+                        <select id="filterDifficulty" class="filter-select">
+                            <option value="">All Levels</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-    <table id="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Recipe Name</th>
-                    <th>Image</th>
-                    <th>Rating</th>
-                    <th>Price</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-                <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px; font-style: italic; color: #666;">
-                        Click "Load Recipe Menu" to see our delicious recipes! 🍴
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            <!-- Status Message -->
+            <div id="status" class="status-message" style="display: none;"></div>
 
-    <script src="notify.js"></script>
-    <script src="details.js"></script>
-    <script src="script.js"></script>
+            <!-- Products Grid -->
+            <div id="productsGrid" class="products-grid">
+                <!-- Products will be loaded here -->
+            </div>
 
-    <!-- Product details modal -->
-    <div id="product-modal" style="display:none; position:fixed; left:0; top:0; right:0; bottom:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
-        <div style="background:white; padding:16px; max-width:600px; width:90%; border-radius:8px;">
-            <button id="modal-close" style="float:right;">✖</button>
-            <h2 id="modal-title"></h2>
-            <img id="modal-img" src="" alt="" style="max-width:100%; height:200px; object-fit:cover; border-radius:6px;">
-            <p id="modal-desc"></p>
-            <div>
-                <label>Quantity: <input id="modal-qty" type="number" value="1" min="1" style="width:60px"></label>
-                <button id="modal-add" type="button">Add to Cart</button>
+            <!-- Pagination -->
+            <div id="pagination" class="pagination" style="display: none;">
+                <!-- Pagination buttons will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Orders Section -->
+        <div id="ordersSection" class="section">
+            <h2>My Orders</h2>
+            <div id="ordersList">
+                <!-- Orders will be loaded here -->
             </div>
         </div>
     </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Shopping Cart</h3>
+            <button id="closeCart" class="close-cart">✕</button>
+        </div>
+        
+        <div class="cart-content">
+            <div id="cartItems">
+                <!-- Cart items will be loaded here -->
+            </div>
+        </div>
+        
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total: ₹<span id="cartTotal">0.00</span></span>
+            </div>
+            <div class="cart-actions">
+                <button id="clearCartBtn" class="btn btn-outline btn-small">Clear Cart</button>
+                <button id="checkoutBtn" class="btn btn-primary">Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Details Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button id="closeModal" class="close-modal">✕</button>
+            </div>
+            
+            <img id="modalImage" class="modal-image" src="" alt="">
+            
+            <div class="product-meta">
+                <span id="modalRating">⭐ 0</span>
+                <span id="modalPrice">₹0.00</span>
+            </div>
+            
+            <div class="product-meta">
+                <span id="modalCuisine">Cuisine</span>
+                <span id="modalDifficulty">Difficulty</span>
+                <span id="modalTime">Time</span>
+            </div>
+            
+            <p id="modalDescription"></p>
+            
+            <div class="form-group">
+                <label>Ingredients:</label>
+                <ul id="modalIngredients"></ul>
+            </div>
+            
+            <div class="form-group">
+                <label>Instructions:</label>
+                <ol id="modalInstructions"></ol>
+            </div>
+            
+            <div class="form-group">
+                <label for="modalQuantity">Quantity:</label>
+                <input type="number" id="modalQuantity" min="1" value="1">
+            </div>
+            
+            <button id="addToCartModal" class="btn btn-primary">Add to Cart</button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login</h2>
+                <button onclick="closeModal('loginModal')" class="close-modal">✕</button>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username:</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="button" onclick="switchToRegister()" class="btn btn-outline">Register Instead</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Register</h2>
+                <button onclick="closeModal('registerModal')" class="close-modal">✕</button>
+            </div>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerUsername">Username:</label>
+                    <input type="text" id="registerUsername" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerEmail">Email:</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPassword">Password:</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="button" onclick="switchToLogin()" class="btn btn-outline">Login Instead</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="spinner" style="display: none;">
+        <div class="spinner-circle"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="enhanced-app.js"></script>
 </body>
 </html>

@@ -1,0 +1,15 @@
+[
+  {
+    "date": "2025-10-03",
+    "orders": 1,
+    "revenue": 966,
+    "newUsers": 0,
+    "pageViews": 0,
+    "topProducts": {
+      "Butter Chicken": 1,
+      "Margherita Pizza": 1,
+      "Greek Salad": 1,
+      "Fish Tacos": 1
+    }
+  }
+]

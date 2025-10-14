@@ -1,0 +1,103 @@
+[
+  {
+    "id": 1,
+    "name": "Butter Chicken",
+    "description": "Creamy and rich Indian curry with tender chicken",
+    "price": 299,
+    "category": "Indian",
+    "cuisine": "Indian",
+    "image": "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=300",
+    "ingredients": [
+      "chicken",
+      "butter",
+      "tomatoes",
+      "cream",
+      "spices"
+    ],
+    "prepTime": 20,
+    "cookTime": 30,
+    "servings": 4,
+    "rating": 4.5,
+    "createdAt": "2025-10-03T05:32:36.700Z"
+  },
+  {
+    "id": 2,
+    "name": "Margherita Pizza",
+    "description": "Classic Italian pizza with tomatoes, mozzarella, and basil",
+    "price": 249,
+    "category": "Italian",
+    "cuisine": "Italian",
+    "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=300",
+    "ingredients": [
+      "dough",
+      "tomato sauce",
+      "mozzarella",
+      "basil"
+    ],
+    "prepTime": 15,
+    "cookTime": 12,
+    "servings": 2,
+    "rating": 4.3,
+    "createdAt": "2025-10-03T05:32:36.700Z"
+  },
+  {
+    "id": 3,
+    "name": "Chicken Teriyaki",
+    "description": "Sweet and savory Japanese grilled chicken",
+    "price": 279,
+    "category": "Japanese",
+    "cuisine": "Japanese",
+    "image": "https://images.unsplash.com/photo-1572441102-e8b5a2fe5d6a?w=300",
+    "ingredients": [
+      "chicken",
+      "teriyaki sauce",
+      "vegetables"
+    ],
+    "prepTime": 15,
+    "cookTime": 20,
+    "servings": 3,
+    "rating": 4.4,
+    "createdAt": "2025-10-03T05:32:36.700Z"
+  },
+  {
+    "id": 4,
+    "name": "Greek Salad",
+    "description": "Fresh Mediterranean salad with feta and olives",
+    "price": 189,
+    "category": "Mediterranean",
+    "cuisine": "Mediterranean",
+    "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=300",
+    "ingredients": [
+      "tomatoes",
+      "cucumber",
+      "olives",
+      "feta cheese"
+    ],
+    "prepTime": 10,
+    "cookTime": 0,
+    "servings": 2,
+    "rating": 4,
+    "createdAt": "2025-10-03T05:32:36.700Z"
+  },
+  {
+    "id": 5,
+    "name": "Fish Tacos",
+    "description": "Fresh and zesty Mexican-style fish tacos",
+    "price": 229,
+    "category": "Mexican",
+    "cuisine": "Mexican",
+    "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300",
+    "ingredients": [
+      "fish",
+      "tortillas",
+      "cabbage",
+      "lime",
+      "cilantro"
+    ],
+    "prepTime": 15,
+    "cookTime": 10,
+    "servings": 3,
+    "rating": 4.3,
+    "createdAt": "2025-10-03T05:32:36.700Z"
+  }
+]

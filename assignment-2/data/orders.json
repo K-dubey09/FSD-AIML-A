@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1759471112651,
+    "userId": 2,
+    "username": "user",
+    "items": [
+      {
+        "productId": 1,
+        "name": "Butter Chicken",
+        "price": 299,
+        "quantity": 1,
+        "addedAt": "2025-10-03T05:58:19.804Z"
+      },
+      {
+        "productId": 2,
+        "name": "Margherita Pizza",
+        "price": 249,
+        "quantity": 1,
+        "addedAt": "2025-10-03T05:58:24.219Z"
+      },
+      {
+        "productId": 4,
+        "name": "Greek Salad",
+        "price": 189,
+        "quantity": 1,
+        "addedAt": "2025-10-03T05:58:26.996Z"
+      },
+      {
+        "productId": 5,
+        "name": "Fish Tacos",
+        "price": 229,
+        "quantity": 1,
+        "addedAt": "2025-10-03T05:58:28.852Z"
+      }
+    ],
+    "total": 966,
+    "status": "pending",
+    "createdAt": "2025-10-03T05:58:32.651Z",
+    "updatedAt": "2025-10-03T05:58:32.651Z"
+  }
+]

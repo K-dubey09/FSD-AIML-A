@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Store - Delicious Recipes Delivered</title>
+    <link rel="stylesheet" href="store.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-utensils"></i>
+                <span>Recipe Store</span>
+            </div>
+            
+            <nav class="nav">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#menu" class="nav-link">Menu</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="header-actions">
+                <div class="cart-btn" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </div>
+                
+                <div class="auth-section">
+                    <div id="logged-out" class="auth-buttons">
+                        <button class="btn btn-outline" onclick="showLoginModal()">Login</button>
+                        <button class="btn btn-primary" onclick="showRegisterModal()">Sign Up</button>
+                    </div>
+                    
+                    <div id="logged-in" class="user-menu" style="display: none;">
+                        <span class="user-name">Welcome, <span id="username"></span></span>
+                        <button class="btn btn-outline" onclick="logout()">Logout</button>
+                        <button id="admin-btn" class="btn btn-admin" onclick="openAdmin()" style="display: none;">Admin</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Delicious Recipes, Delivered Fresh</h1>
+            <p>Discover amazing recipes from around the world, order your favorites, and enjoy restaurant-quality meals at home.</p>
+            <button class="btn btn-hero" onclick="scrollToMenu()">Explore Menu</button>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=400&fit=crop" alt="Delicious Food">
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="menu">
+        <div class="container">
+            <h2 class="section-title">Our Menu</h2>
+            
+            <!-- Filter Buttons -->
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">All</button>
+                <button class="filter-btn" data-category="Indian">Indian</button>
+                <button class="filter-btn" data-category="Italian">Italian</button>
+                <button class="filter-btn" data-category="Japanese">Japanese</button>
+                <button class="filter-btn" data-category="Mediterranean">Mediterranean</button>
+                <button class="filter-btn" data-category="Mexican">Mexican</button>
+            </div>
+            
+            <!-- Products Grid -->
+            <div id="products-grid" class="products-grid">
+                <!-- Products will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="close-cart" onclick="toggleCart()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div id="cart-items" class="cart-items">
+            <!-- Cart items will be loaded dynamically -->
+        </div>
+        
+        <div class="cart-footer">
+            <div class="cart-total">
+                <strong>Total: ₹<span id="cart-total">0</span></strong>
+            </div>
+            <button id="checkout-btn" class="btn btn-primary btn-full" onclick="checkout()" disabled>
+                Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Login</h3>
+                <button class="close-modal" onclick="closeModal('login-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="login-form" class="modal-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+            </form>
+            
+            <p class="modal-footer">
+                Don't have an account? 
+                <a href="#" onclick="switchModal('login-modal', 'register-modal')">Sign up here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Sign Up</h3>
+                <button class="close-modal" onclick="closeModal('register-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="register-form" class="modal-form">
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" name="password" required minlength="6">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
+            </form>
+            
+            <p class="modal-footer">
+                Already have an account? 
+                <a href="#" onclick="switchModal('register-modal', 'login-modal')">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Orders Modal -->
+    <div id="orders-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>My Orders</h3>
+                <button class="close-modal" onclick="closeModal('orders-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="orders-list" class="orders-list">
+                <!-- Orders will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="store.js"></script>
+</body>
+</html>

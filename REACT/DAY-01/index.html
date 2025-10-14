@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Vanilla Cards Demo</title>
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; background: #f5f7fb; margin: 0; padding: 20px; }
+        header { display:flex; align-items:center; gap:12px; margin-bottom:16px }
+        #app { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .demo-card { background: #fff; border-radius: 10px; padding: 12px; box-shadow: 0 10px 24px rgba(12,20,30,0.06); }
+        .demo-card img { max-width: 100%; border-radius: 8px; display:block; margin-bottom:8px; }
+        .demo-card h3 { margin: 0 0 8px 0; font-size: 1.05rem; }
+        .demo-card p { margin: 0 0 12px 0; color:#444; }
+        .demo-card .card-controls { display:flex; gap:8px; }
+        .demo-card .card-controls button { padding:6px 8px; border-radius:6px; border: none; cursor:pointer; }
+        .demo-card .card-controls .card-edit { background: #e8f0ff; }
+        .demo-card .card-controls .card-delete { background: #ffe8e8; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 style="margin:0">Cards Demo</h1>
+        <small style="color:#666">Interactive demo using <code>script.js</code>. Open console for <code>cardsDemo</code>.</small>
+        
+    
+    </header>
+
+    <!-- a dynamic section where you can add , edit and remove cards using js functions in dynamic basis same as react basically a function shocasing the working mechanism of REACT -->
+
+
+    <main>
+
+    <!--a dynamic card container like react using just js functions-->
+
+    <div id="app"></div>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

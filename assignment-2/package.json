@@ -1,20 +1,29 @@
 {
-  "name": "assignment-2-cart-api",
-  "version": "1.0.0",
-  "description": "Complete Recipe Store with Admin Panel and Login System",
-  "main": "server.js",
+  "name": "recipe-store-complete",
+  "version": "2.0.0",
+  "description": "Complete Recipe Store with Admin Dashboard, User Management, and Analytics",
+  "main": "app.js",
   "scripts": {
-    "start": "node server-enhanced.js",
-    "dev": "nodemon server-enhanced.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
+  "keywords": [
+    "recipe",
+    "store",
+    "admin",
+    "dashboard",
+    "analytics"
+  ],
+  "author": "Recipe Store Team",
+  "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "csv-writer": "^1.6.0",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "bcryptjs": "^2.4.3",
-    "node-fetch": "^2.6.7",
     "multer": "^1.4.5-lts.1",
-    "csv-writer": "^1.6.0"
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
