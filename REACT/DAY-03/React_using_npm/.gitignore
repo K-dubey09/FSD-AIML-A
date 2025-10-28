@@ -1,0 +1,12 @@
+.vite/
+node_modules/
+dist/
+build/
+npm-debug.log*
+.DS_Store
+.parcel-cache/
+.cache/
+/.env
+.idea/
+.vscode/
+*.log

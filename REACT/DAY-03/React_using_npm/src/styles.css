@@ -13,3 +13,18 @@ body{font-family:system-ui,Segoe UI,Roboto,Arial;background:#f7f9fc;margin:0}
 .cart-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
 .total{font-weight:700;margin-top:8px}
 .cart-indicator{font-size:14px;color:var(--muted)}
+
+/* search and controls */
+.controls{display:flex;gap:12px;align-items:center}
+.search{padding:6px;border-radius:6px;border:1px solid #ddd}
+
+/* cart */
+.cart-panel .cart-item{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.cart-qty{display:flex;align-items:center;gap:6px}
+.cart-qty button{width:28px;height:28px;border-radius:4px}
+.cart-actions{display:flex;gap:8px;margin-top:8px}
+.cart-actions button[disabled]{opacity:.5}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center}
+.modal-content{background:#fff;padding:16px;border-radius:6px;min-width:280px}

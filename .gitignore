@@ -4,3 +4,16 @@
 *.parcel-cache/
 dist/
 build/
+
+
+*vite/
+*dist
+*buil
+*npm-debug.log*
+*.DS_Store
+*.parcel-cache/
+*.cache/
+.env
+.idea/
+.vscode/
+*.log
