@@ -1,0 +1,26 @@
+{
+  "name": "day-03",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel src/index.html --port 3000",
+    "start": "npm run dev",
+    "build": "parcel build src/index.html --dist-dir build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "parcel": "^2.10.0",
+    "@babel/cli": "^7.28.3",
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5"
+  }
+}

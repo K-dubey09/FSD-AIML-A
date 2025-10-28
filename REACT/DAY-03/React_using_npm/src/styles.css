@@ -1,0 +1,15 @@
+:root{--accent:#0b63ff;--muted:#666}
+body{font-family:system-ui,Segoe UI,Roboto,Arial;background:#f7f9fc;margin:0}
+.app{max-width:1000px;margin:24px auto;padding:12px}
+.header{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.main{display:flex;gap:16px}
+.books{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.book{background:#fff;padding:12px;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.book h3{margin:0 0 6px 0;font-size:16px}
+.author{color:var(--muted);font-size:13px}
+.price{font-weight:600;margin-top:8px}
+.book button{margin-top:8px;background:var(--accent);color:#fff;border:0;padding:6px 8px;border-radius:4px;cursor:pointer}
+.cart-panel{width:280px;background:#fff;padding:12px;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.cart-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+.total{font-weight:700;margin-top:8px}
+.cart-indicator{font-size:14px;color:var(--muted)}
