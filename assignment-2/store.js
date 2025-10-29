@@ -48,7 +48,7 @@ class RecipeStore {
         try {
             this.showLoading(true);
             
-            const response = await this.apiCall('/api/auth/login', 'POST', {
+            const response = await this.apiCall('/api/login', 'POST', {
                 username,
                 password
             });
@@ -76,7 +76,7 @@ class RecipeStore {
         try {
             this.showLoading(true);
             
-            const response = await this.apiCall('/api/auth/register', 'POST', {
+            const response = await this.apiCall('/api/register', 'POST', {
                 username,
                 email,
                 password
@@ -99,7 +99,7 @@ class RecipeStore {
 
     async logout() {
         try {
-            await this.apiCall('/api/auth/logout', 'POST');
+            await this.apiCall('/api/logout', 'POST');
             this.currentUser = null;
             this.cart = [];
             this.updateAuthUI(false);
@@ -184,8 +184,8 @@ class RecipeStore {
             const response = await this.apiCall('/api/cart', 'GET');
             if (response.ok) {
                 const cartData = await response.json();
-                // App.js returns { userId: ..., items: [...] }
-                this.cart = cartData.items || [];
+                // Server returns array directly, not nested
+                this.cart = Array.isArray(cartData) ? cartData : [];
                 this.updateCartUI();
             }
         } catch (error) {
@@ -201,8 +201,17 @@ class RecipeStore {
         }
 
         try {
+            const product = this.products.find(p => p.id === productId);
+            if (!product) {
+                this.showToast('Product not found', 'error');
+                return;
+            }
+
             const response = await this.apiCall('/api/cart/add', 'POST', {
-                productId,
+                id: productId,
+                name: product.name,
+                price: product.price,
+                image: product.image,
                 quantity: 1
             });
 
@@ -220,7 +229,7 @@ class RecipeStore {
 
     async removeFromCart(productId) {
         try {
-            const response = await this.apiCall(`/api/cart/remove/${productId}`, 'DELETE');
+            const response = await this.apiCall('/api/cart/remove', 'POST', { id: productId });
             
             if (response.ok) {
                 await this.loadCart();
@@ -232,26 +241,18 @@ class RecipeStore {
     }
 
     async updateCartQuantity(productId, change) {
-        const item = this.cart.find(item => item.productId === productId);
-        if (!item) return;
-
-        const newQuantity = item.quantity + change;
-        if (newQuantity <= 0) {
-            await this.removeFromCart(productId);
-            return;
-        }
-
-        // Remove and re-add with new quantity
-        await this.removeFromCart(productId);
-        
-        for (let i = 0; i < newQuantity; i++) {
-            await this.apiCall('/api/cart/add', 'POST', {
-                productId,
-                quantity: 1
+        try {
+            const response = await this.apiCall('/api/cart/change', 'POST', {
+                id: productId,
+                change: change
             });
+            
+            if (response.ok) {
+                await this.loadCart();
+            }
+        } catch (error) {
+            this.showToast('Failed to update quantity', 'error');
         }
-        
-        await this.loadCart();
     }
 
     updateCartUI() {
@@ -265,7 +266,7 @@ class RecipeStore {
         if (this.cart.length === 0) {
             cartItems.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
             cartTotal.textContent = '0';
-            checkoutBtn.disabled = true;
+            if (checkoutBtn) checkoutBtn.disabled = true;
         } else {
             cartItems.innerHTML = this.cart.map(item => `
                 <div class="cart-item">
@@ -274,23 +275,23 @@ class RecipeStore {
                         <div class="cart-item-price">₹${item.price}</div>
                     </div>
                     <div class="quantity-controls">
-                        <button class="quantity-btn" onclick="store.updateCartQuantity(${item.productId}, -1)">
+                        <button class="quantity-btn" onclick="store.updateCartQuantity(${item.id}, -1)">
                             <i class="fas fa-minus"></i>
                         </button>
                         <span class="quantity">${item.quantity}</span>
-                        <button class="quantity-btn" onclick="store.updateCartQuantity(${item.productId}, 1)">
+                        <button class="quantity-btn" onclick="store.updateCartQuantity(${item.id}, 1)">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
-                    <button class="remove-item" onclick="store.removeFromCart(${item.productId})" title="Remove">
+                    <button class="remove-item" onclick="store.removeFromCart(${item.id})" title="Remove">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             `).join('');
 
             const total = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            cartTotal.textContent = total;
-            checkoutBtn.disabled = false;
+            cartTotal.textContent = total.toFixed(2);
+            if (checkoutBtn) checkoutBtn.disabled = false;
         }
     }
 
@@ -314,14 +315,14 @@ class RecipeStore {
         try {
             this.showLoading(true);
             
-            const response = await this.apiCall('/api/orders', 'POST');
+            const response = await this.apiCall('/api/cart/checkout', 'POST');
             const data = await response.json();
 
             if (response.ok) {
                 this.cart = [];
                 this.updateCartUI();
                 this.toggleCart();
-                this.showToast('Order placed successfully!', 'success');
+                this.showToast(`Order placed successfully! Total: ₹${data.total}`, 'success');
                 
                 // Show order confirmation
                 setTimeout(() => {
@@ -371,9 +372,9 @@ class RecipeStore {
                     <span class="order-status ${order.status}">${order.status}</span>
                 </div>
                 <div class="order-items">
-                    ${order.items.map(item => `<div class="order-item-name">${item.name} x ${item.quantity}</div>`).join('')}
+                    ${(order.items || []).map(item => `<div class="order-item-name">${item.name} x ${item.quantity}</div>`).join('')}
                 </div>
-                <div class="order-total">Total: ₹${order.total}</div>
+                <div class="order-total">Total: ₹${order.total.toFixed(2)}</div>
                 <div class="order-date">${new Date(order.createdAt).toLocaleDateString()}</div>
             </div>
         `).join('');

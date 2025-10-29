@@ -45,6 +45,7 @@ async function processData() {
 processData();`;
 
 const _logs = [];
+const _persistentLogs = []; // Persistent logs for the logs section
 
 function esc(s) { 
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); 
@@ -109,11 +110,20 @@ function addLogEntry(text, kind) {
     const logCount = document.getElementById('logCount');
     if (!logsContainer) return;
     
-    const entry = document.createElement('div');
-    entry.className = 'log-entry ' + kind;
-    
     const now = new Date();
     const timeStr = now.toLocaleTimeString();
+    const timestamp = now.toISOString();
+    
+    // Store in persistent logs array
+    _persistentLogs.push({
+        time: timestamp,
+        text: text,
+        kind: kind,
+        timeStr: timeStr
+    });
+    
+    const entry = document.createElement('div');
+    entry.className = 'log-entry ' + kind;
     
     entry.innerHTML = '<div class="log-text">' + esc(text) + '</div><div class="log-time">' + timeStr + '</div>';
     
@@ -183,9 +193,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 editor.focus();
             }
             clearScreen();
-            clearLogs();
             _logs.length = 0;
             updateStatus('Ready', '#4f46e5');
+            addLogEntry('Editor reset → default code restored', 'info');
             addLogEntry('Editor reset to default code', 'info');
         });
     }
@@ -196,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
             clearScreen();
             _logs.length = 0;
             updateStatus('Ready', '#4f46e5');
-            addLogEntry('Output cleared', 'info');
+            addLogEntry('Output console cleared', 'info');
         });
     }
     
@@ -215,10 +225,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     const originalText = copyBtn.textContent;
                     copyBtn.textContent = '✓ Copied!';
                     setTimeout(function() { copyBtn.textContent = originalText; }, 2000);
-                    addLogEntry('Code copied to clipboard', 'ok');
+                    var lines = (editor.textContent || '').split('\n').length;
+                    addLogEntry('Code copied → ' + lines + ' lines to clipboard', 'ok');
                 }).catch(function(err) {
                     console.error('Copy failed:', err);
-                    addLogEntry('Failed to copy code', 'error');
+                    addLogEntry('Copy failed → clipboard error', 'error');
                 });
             }
         });
@@ -232,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 code = code.trim();
                 editor.textContent = code;
                 localStorage.setItem('day04_editor', code);
-                addLogEntry('Code formatted', 'info');
+                addLogEntry('Code formatted → whitespace trimmed', 'info');
             }
         });
     }
@@ -250,6 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const isDark = document.body.classList.contains('dark-mode');
             themeBtn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
             localStorage.setItem('day04_theme', isDark ? 'dark' : 'light');
+            addLogEntry('Theme changed → ' + (isDark ? 'dark' : 'light') + ' mode enabled', 'info');
             addLogEntry('Switched to ' + (isDark ? 'dark' : 'light') + ' mode', 'info');
         });
     }
@@ -267,30 +279,27 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (d.type === 'log' || d.type === 'info') {
             writeLine(String(d.message), 'info');
-            addLogEntry(String(d.message), 'info');
         }
         else if (d.type === 'warn') {
             writeLine('⚠️ ' + String(d.message), 'small');
-            addLogEntry('WARN: ' + String(d.message), 'info');
         }
         else if (d.type === 'debug') {
             writeLine('🐛 ' + String(d.message), 'small');
-            addLogEntry('DEBUG: ' + String(d.message), 'info');
         }
         else if (d.type === 'error') {
             writeLine('❌ Error: ' + String(d.message), 'error');
-            addLogEntry('ERROR: ' + String(d.message), 'error');
+            addLogEntry('Execution error → ' + String(d.message), 'error');
             updateStatus('Error', '#dc2626');
         }
         else if (d.type === 'result') {
             if (String(d.value) !== 'undefined') {
                 writeLine('↪️ Result: ' + String(d.value), 'ok');
-                addLogEntry('Returned: ' + String(d.value), 'ok');
             }
         }
         else if (d.type === 'done') {
             writeLine('✅ Execution completed', 'ok');
-            addLogEntry('Execution finished successfully', 'ok');
+            var outputLines = document.querySelectorAll('.output-line').length;
+            addLogEntry('Code executed → ' + outputLines + ' console outputs, completed successfully', 'ok');
             updateStatus('Completed', '#16a34a');
         }
     });
@@ -310,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
             a.click();
             a.remove();
             URL.revokeObjectURL(url);
-            addLogEntry('Log exported successfully', 'ok');
+            addLogEntry('Logs exported → file downloaded', 'ok');
         });
     }
 
@@ -319,7 +328,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Run clicked');
             clearScreen();
             updateStatus('Running...', '#f59e0b');
-            addLogEntry('Started code execution', 'info');
             
             writeLine('🚀 Executing code...', 'info');
             writeLine('', 'small');
@@ -330,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!code.trim()) {
                     writeLine('⚠️ No code to execute', 'error');
                     updateStatus('Ready', '#4f46e5');
-                    addLogEntry('No code provided', 'error');
+                    addLogEntry('No code to run → editor is empty', 'error');
                     return;
                 }
 
