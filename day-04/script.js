@@ -153,42 +153,12 @@ function writeLine(text, kind = 'info', {typewrite=true} = {}){
     // store log
     _logs.push({ts: Date.now(), kind, text: content});
     screen.appendChild(el);
-    // typewriter
-    return new Promise(resolve => {
-        if (typewrite && isCodeLike) {
-            // show highlighted HTML progressively per character
-            const html = highlightCodeLine(content);
-            // simple: reveal characters one by one from plain text but set innerHTML incrementally is complex
-            // we'll progressively reveal from plain text to keep it simple
-            let i = 0; const txt = content;
-            const step = () => {
-                i += 1;
-                el.textContent = txt.slice(0,i);
-                screen.scrollTop = screen.scrollHeight;
-                if (i < txt.length) setTimeout(step, Math.max(5, typeSpeed));
-                else { el.classList.add('show'); resolve(); }
-            };
-            requestAnimationFrame(() => setTimeout(step, 8));
-        } else if (typewrite) {
-            // typewriter for normal text
-            let i = 0; const txt = content;
-            const step = () => {
-                i += 1;
-                el.textContent = txt.slice(0,i);
-                screen.scrollTop = screen.scrollHeight;
-                if (i < txt.length) setTimeout(step, Math.max(5, typeSpeed));
-                else { el.classList.add('show'); resolve(); }
-            };
-            requestAnimationFrame(() => setTimeout(step, 8));
-        } else {
-            // no typewrite, set directly; allow HTML for code
-            if (isCodeLike) el.innerHTML = highlightCodeLine(content);
-            else el.textContent = content;
-            requestAnimationFrame(() => el.classList.add('show'));
-            screen.scrollTop = screen.scrollHeight;
-            resolve();
-        }
-    });
+    
+    // Instant display without animation
+    if (isCodeLike) el.innerHTML = highlightCodeLine(content);
+    else el.textContent = content;
+    el.classList.add('show');
+    screen.scrollTop = screen.scrollHeight;
 }
 
 function clearScreen() {
@@ -296,26 +266,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     if (btn) {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', () => {
             clearScreen();
-            // first, print the editor content into output as a code block (animated)
+            // Show loading indicator
+            writeLine('⏳ Executing code...', 'info');
+            
             if (editor) {
                 const code = editor.textContent || '';
-                await writeLine('--- Executing snippet ---', 'info', {typewrite:false});
-                // print code lines with a slight stagger and highlighting
+                // Print code to output instantly
+                writeLine('--- Code ---', 'info');
                 const lines = code.split('\n');
-                const lineDelay = Number(lineDelayInput?.value || 40);
-                for (let i = 0; i < lines.length; i++) {
-                    await writeLine(lines[i], 'small', {typewrite:true});
-                    await new Promise(r => setTimeout(r, lineDelay));
-                }
-                await writeLine('--- Output ---', 'info', {typewrite:false});
+                lines.forEach(line => writeLine(line, 'small'));
+                writeLine('--- Output ---', 'info');
 
                 // send code to sandbox to execute (runner iframe)
                 runnerFrame.contentWindow.postMessage({type:'exec', code}, '*');
             }
-
-            // (No demo run) Only execute the code from the editable editor in the sandbox.
+        });
+    }
+    
+    // Add keyboard shortcut: Ctrl+Enter to run code
+    if (editor) {
+        editor.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                btn?.click();
+            }
         });
     }
 });
