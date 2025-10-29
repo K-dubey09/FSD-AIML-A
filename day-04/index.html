@@ -1,20 +1,81 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-    <meta charset="utf-8">
-    <title>async await promise</title>
-</head>
-<body>
-    <script>
-        async function myFunction() {
-            let promise = new Promise((resolve, reject) => {
-                setTimeout(() => resolve("done!"), 2000)
-            });
-            let result = await promise;
-            console.log(result);
-        }
-        myFunction();
-    </script>
-    <script src="./script.js"></script>
-</body>
-</html>
+        <meta charset="utf-8">
+        <title>async await promise</title>
+        <style>
+            /* Screen styles for step-by-step output */
+            body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; background:#f3f6fb; color:#0f172a; padding:24px}
+            .screen-wrapper{max-width:760px;margin:18px auto;padding:0 16px}
+            .screen{
+                background:#000;
+                color:#e6edf3;
+                border-radius:12px;
+                padding:16px;
+                min-height:160px;
+                box-shadow:0 10px 30px rgba(2,6,23,0.6);
+                font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+                font-size:14px;
+                line-height:1.5;
+                overflow:auto;
+                border:1px solid rgba(255,255,255,0.04);
+            }
+            .screen .line{padding:6px 8px;border-radius:6px;margin-bottom:6px;white-space:pre-wrap}
+            .screen .line.info{color:#cfe8ff;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent)}
+            .screen .line.ok{color:#9ef3c1}
+            .screen .line.error{color:#ffd1d1}
+            .screen .line.small{font-size:12px;color:#94a3b8}
+            .screen .line{opacity:0;transform:translateY(6px)}
+            .screen .line.show{opacity:1;transform:none;transition:all 280ms cubic-bezier(.2,.9,.2,1)}
+            #editor{min-height:240px;outline:none;white-space:pre;overflow:auto}
+            #editor:empty:before{content:attr(data-placeholder);color:#94a3b8;display:block}
+            /* code highlighting in output */
+            .kw{color:#60a5fa;font-weight:700}
+            .num{color:#f472b6}
+            .controls{max-width:760px;margin:0 auto;display:flex;gap:12px;align-items:center}
+            button#fetchBtn{padding:10px 16px;border-radius:8px;border:0;background:#0b63ff;color:white;font-weight:600;cursor:pointer}
+            button#fetchBtn:hover{background:#0952d4}
+        </style>
+    </head>
+    <body>
+        <h1 style="text-align:center;margin-top:0;">async await promise</h1>
+        <p id="data">Status: ready</p>
+        <div class="controls" style="margin-bottom:12px;">
+            <button id="fetchBtn">Fetch Data</button>
+            <button id="resetBtn" style="background:#f3f4f6;color:#0f172a;padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);">Reset Editor</button>
+        </div>
+
+        <div class="screen-wrapper" style="display:grid;grid-template-columns:1fr 420px;gap:18px;align-items:start">
+            <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <div style="font-weight:700">Editable Code</div>
+                    <div style="font-size:13px;color:#64748b">Edit the snippet and click Fetch Data. Edits are saved locally (refresh restores last saved content).</div>
+                </div>
+                <div id="editor" class="screen" contenteditable="true" spellcheck="false" aria-label="Editable code area"></div>
+            </div>
+
+            <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <div style="font-weight:700">Output Screen</div>
+                    <div style="font-size:13px;color:#64748b">Step-by-step output</div>
+                </div>
+                <div id="screen" class="screen" aria-live="polite"></div>
+            </div>
+        </div>
+                <div style="max-width:760px;margin:12px auto 0;padding:0 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                    <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#475569">
+                        Typing speed
+                        <input id="typeSpeed" type="range" min="50" max="800" value="200" style="width:160px">
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#475569">
+                        Line delay
+                        <input id="lineDelay" type="range" min="0" max="300" value="15" style="width:160px">
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#475569">
+                        <input id="tsToggle" type="checkbox"> Show timestamps
+                    </label>
+                    <button id="exportBtn" style="margin-left:auto;padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:#fff">Export Log</button>
+                </div>
+        <script src="./script.js"></script>
+    </body>
+    </html>

@@ -1,0 +1,71 @@
+[
+  {
+    "id": 1,
+    "title": "Eloquent JavaScript",
+    "author": "Marijn Haverbeke",
+    "price": 499,
+    "cover": "/images/eloquent.svg",
+    "description": "A modern introduction to programming using JavaScript.",
+    "category": "JavaScript"
+  },
+  {
+    "id": 2,
+    "title": "You Don't Know JS (ES6+)",
+    "author": "Kyle Simpson",
+    "price": 399,
+    "cover": "/images/ydkjs.svg",
+    "description": "Deep dive into core mechanisms of the JavaScript language.",
+    "category": "JavaScript"
+  },
+  {
+    "id": 3,
+    "title": "JavaScript: The Good Parts",
+    "author": "Douglas Crockford",
+    "price": 299,
+    "cover": "/images/goodparts.svg",
+    "description": "A classic book that identifies the elegant parts of JavaScript.",
+    "category": "JavaScript"
+  },
+  {
+    "id": 4,
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "price": 599,
+    "cover": "/images/cleancode.svg",
+    "description": "Guidelines and best practices for writing readable, maintainable code.",
+    "category": "Software Engineering"
+  },
+  {
+    "id": 5,
+    "title": "The Pragmatic Programmer",
+    "author": "Andrew Hunt",
+    "price": 549,
+    "cover": "/images/pragmatic.svg",
+    "description": "Tips and techniques for pragmatic software development.",
+    "category": "Software Engineering"
+  },
+  {
+    "id": 1761717480882,
+    "title": "Test Book",
+    "author": "Test Author",
+    "price": 199,
+    "category": "Test",
+    "sellerId": 1761717480788
+  },
+  {
+    "id": 1761717633530,
+    "title": "Test Book",
+    "author": "Test Author",
+    "price": 199,
+    "category": "Test",
+    "sellerId": 1761717480788
+  },
+  {
+    "id": 1761717692878,
+    "title": "Test Book",
+    "author": "Test Author",
+    "price": 199,
+    "category": "Test",
+    "sellerId": 1761717692798
+  }
+]
