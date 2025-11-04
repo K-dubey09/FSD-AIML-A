@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "id": 1761763196104,
+    "items": [
+      {
+        "id": 3,
+        "title": "JavaScript: The Good Parts",
+        "price": 299,
+        "qty": 1
+      },
+      {
+        "id": 2,
+        "title": "You Don't Know JS (ES6+)",
+        "price": 399,
+        "qty": 1
+      },
+      {
+        "id": 1,
+        "title": "Eloquent JavaScript",
+        "price": 499,
+        "qty": 1
+      }
+    ],
+    "total": 1197,
+    "customer": {
+      "name": "KUSHAGRA DUBEY",
+      "email": "",
+      "address": "VILLAGE : saithua\nPost : Mubarak pur pikar"
+    },
+    "status": "placed",
+    "tracking": "pending",
+    "createdAt": "2025-10-29T18:39:56.104Z"
+  }
+]

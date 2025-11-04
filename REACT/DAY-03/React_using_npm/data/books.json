@@ -43,29 +43,5 @@
     "cover": "/images/pragmatic.svg",
     "description": "Tips and techniques for pragmatic software development.",
     "category": "Software Engineering"
-  },
-  {
-    "id": 1761717480882,
-    "title": "Test Book",
-    "author": "Test Author",
-    "price": 199,
-    "category": "Test",
-    "sellerId": 1761717480788
-  },
-  {
-    "id": 1761717633530,
-    "title": "Test Book",
-    "author": "Test Author",
-    "price": 199,
-    "category": "Test",
-    "sellerId": 1761717480788
-  },
-  {
-    "id": 1761717692878,
-    "title": "Test Book",
-    "author": "Test Author",
-    "price": 199,
-    "category": "Test",
-    "sellerId": 1761717692798
   }
 ]
