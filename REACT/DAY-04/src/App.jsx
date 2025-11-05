@@ -1,129 +1,88 @@
-import { useState, useEffect } from 'react'
+
+import { useEffect, useState } from 'react'
 import './App.css'
-import Navbar from './components/Navbar.js'
-import Hero from './components/Hero.js'
-import ProductList from './components/ProductList.js'
-import ProductDetail from './components/ProductDetail.js'
-import Cart from './components/Cart.js'
+import ProductCard from './components/ProductCard'
+import Cart from './components/Cart'
 
 function App() {
-  const [cartItems, setCartItems] = useState([])
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [cart, setCart] = useState([])
   const [showCart, setShowCart] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState(null)
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showToast, setShowToast] = useState(false)
-  const [toastMessage, setToastMessage] = useState('')
 
-  // Load cart from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem('shophub-cart')
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart))
-    }
+    // load cart from localStorage
+    const saved = localStorage.getItem('show-cart')
+    if (saved) setCart(JSON.parse(saved))
   }, [])
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('shophub-cart', JSON.stringify(cartItems))
-  }, [cartItems])
+    localStorage.setItem('show-cart', JSON.stringify(cart))
+  }, [cart])
 
-  const handleAddToCart = (product) => {
-    const existingItem = cartItems.find(item => item.id === product.id)
-    
-    if (existingItem) {
-      setCartItems(cartItems.map(item =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      ))
-      showNotification('✓ Quantity updated in cart!')
-    } else {
-      setCartItems([...cartItems, { ...product, quantity: 1 }])
-      showNotification('✓ Product added to cart!')
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true)
+      const res = await fetch('https://fakestoreapi.com/products')
+      if (!res.ok) throw new Error('Failed to fetch')
+      const data = await res.json()
+      setProducts(data)
+      setError(null)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleUpdateQuantity = (productId, newQuantity) => {
-    if (newQuantity < 1) return
-    
-    setCartItems(cartItems.map(item =>
-      item.id === productId
-        ? { ...item, quantity: newQuantity }
-        : item
-    ))
+  const addToCart = (product) => {
+    setCart(prev => {
+      const found = prev.find(p => p.id === product.id)
+      if (found) {
+        return prev.map(p => p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p)
+      }
+      return [...prev, { ...product, quantity: 1 }]
+    })
   }
 
-  const handleRemoveItem = (productId) => {
-    setCartItems(cartItems.filter(item => item.id !== productId))
-    showNotification('✓ Item removed from cart')
+  const removeFromCart = (id) => {
+    setCart(prev => prev.filter(p => p.id !== id))
   }
 
-  const handleProductClick = (product) => {
-    setSelectedProduct(product)
+  const changeQty = (id, qty) => {
+    if (qty < 1) return
+    setCart(prev => prev.map(p => p.id === id ? { ...p, quantity: qty } : p))
   }
-
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category)
-    setSearchQuery('')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const handleShowHome = () => {
-    setSelectedCategory('all')
-    setSearchQuery('')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const showNotification = (message) => {
-    setToastMessage(message)
-    setShowToast(true)
-    setTimeout(() => setShowToast(false), 3000)
-  }
-
-  const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0)
 
   return (
-    <div className="app">
-      <Navbar 
-        cartCount={cartCount}
-        onCategorySelect={handleCategorySelect}
-        onShowCart={() => setShowCart(true)}
-        onShowHome={handleShowHome}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
-      
-      <Hero />
-      
-      <ProductList 
-        onAddToCart={handleAddToCart}
-        onProductClick={handleProductClick}
-        selectedCategory={selectedCategory}
-        searchQuery={searchQuery}
-      />
+    <div className="app-root container">
+      <header className="site-header">
+        <h1>Simple Store</h1>
+        <div>
+          <button className="btn-cart" onClick={() => setShowCart(true)}>
+            🛒 Cart ({cart.reduce((s, i) => s + i.quantity, 0)})
+          </button>
+        </div>
+      </header>
 
-      {selectedProduct && (
-        <ProductDetail 
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          onAddToCart={handleAddToCart}
-        />
-      )}
+      <main>
+        {loading && <div className="loading">Loading products…</div>}
+        {error && <div className="error">Error: {error}</div>}
+
+        <section className="products-grid">
+          {products.map(p => (
+            <ProductCard key={p.id} product={p} onAddToCart={addToCart} />
+          ))}
+        </section>
+      </main>
 
       {showCart && (
-        <Cart 
-          cartItems={cartItems}
-          onUpdateQuantity={handleUpdateQuantity}
-          onRemoveItem={handleRemoveItem}
-          onClose={() => setShowCart(false)}
-        />
-      )}
-
-      {showToast && (
-        <div className="toast-notification">
-          {toastMessage}
-        </div>
+        <Cart items={cart} onClose={() => setShowCart(false)} onRemove={removeFromCart} onChangeQty={changeQty} />
       )}
     </div>
   )
